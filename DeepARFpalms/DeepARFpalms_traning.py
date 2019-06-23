@@ -23,10 +23,6 @@ def read_dataset():
     ln=(len(df.columns)-1)
     X = df[df.columns[0:ln]].values
     Y = df[df.columns[ln]]
-    # encoder = LabelEncoder()
-    # encoder.fit(Y)
-    # y = encoder.transform(Y)
-    # Y=tf.one_hot(Y,2)
     return (X,Y)
 
 X, Y = read_dataset()
@@ -38,12 +34,10 @@ x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 
 
-x_train=x_train.reshape(x_train.shape[0],x_train.shape[1],1)   ##### (165, 60, 1)
-x_test=x_test.reshape(x_test.shape[0],x_test.shape[1],1)       ###  (42, 60, 1)
+x_train=x_train.reshape(x_train.shape[0],x_train.shape[1],1)   
+x_test=x_test.reshape(x_test.shape[0],x_test.shape[1],1)       
 
-#y_train = keras.utils.to_categorical(y_train, num_classes)
 y_train=tf.keras.utils.to_categorical(y_train,num_classes=num_classes, dtype='float32')
-#y_test = keras.utils.to_categorical(y_test, num_classes)
 y_test= tf.keras.utils.to_categorical(y_test,num_classes=num_classes, dtype='float32')
 
 model = keras.Sequential([
@@ -56,9 +50,6 @@ model = keras.Sequential([
     tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu),
     tf.keras.layers.GlobalMaxPool1D(),
     tf.keras.layers.Dropout(0.5),
-
-    #keras.layers.Flatten(input_shape=(x_train.shape[1:3])),
-    #keras.layers.Dense(128, activation=tf.nn.relu),
     keras.layers.Dense(2, activation=tf.nn.softmax)
 ])
 
@@ -99,48 +90,9 @@ plt.title('ROC curve')
 plt.legend(loc='best')
 plt.show()
 
-#print(np.ravel(y_pred), np.ravel(y_test))
-#print(matthews_corrcoef(y_test, y_pred))
-
-# matrix = metrics.confusion_matrix(y_test.argmax(axis=1), y_pred.argmax(axis=1))
-
-# import seaborn as sns
-# import matplotlib.pyplot as plt     
-
-# ax= plt.subplot()
-# sns.heatmap(matrix, annot=True, ax = ax); #annot=True to annotate cells
-
-# # labels, title and ticks
-# ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
-# ax.set_title('Confusion Matrix'); 
-# ax.xaxis.set_ticklabels(['business', 'health']); ax.yaxis.set_ticklabels(['health', 'business']);
-# plt.show()
-
 test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=40)
 
 model.save(os.getcwd()+"\\weights\\Best_Model_using_ft_weights_CNN.h5")
 
-#model.summary.histogram('accuracy')
-
 print(test_acc,test_loss)
 
-#print('Test loss:', score[0])
-#print('Test accuracy:', score[1])
-
-
-# plt.plot(history.history['acc'])
-# plt.plot(history.history['val_acc'])
-# plt.title('Model accuracy')
-# plt.ylabel('Accuracy')
-# plt.xlabel('Epoch')
-# plt.legend(['Train', 'Test'], loc='upper left')
-# plt.show()
-
-# # Plot training & validation loss values
-# plt.plot(history.history['loss'])
-# plt.plot(history.history['val_loss'])
-# plt.title('Model loss')
-# plt.ylabel('Loss')
-# plt.xlabel('Epoch')
-# plt.legend(['Train', 'Test'], loc='upper left')
-# plt.show()
