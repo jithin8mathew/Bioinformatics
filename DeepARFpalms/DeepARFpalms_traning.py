@@ -1,7 +1,7 @@
 # tensorboard --logdir=logs/
 # TensorFlow and tf.keras
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="-1" 
+os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 
 from time import time
 import tensorflow as tf
@@ -19,7 +19,7 @@ num_classes = 2
 epochs = 1000
 
 def read_dataset():
-    df = pd.read_csv("tain_DL.csv")
+    df = pd.read_csv("data/tain_DL.csv")
     ln=(len(df.columns)-1)
     X = df[df.columns[0:ln]].values
     Y = df[df.columns[ln]]
@@ -34,8 +34,8 @@ x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 
 
-x_train=x_train.reshape(x_train.shape[0],x_train.shape[1],1)   
-x_test=x_test.reshape(x_test.shape[0],x_test.shape[1],1)       
+x_train=x_train.reshape(x_train.shape[0],x_train.shape[1],1)
+x_test=x_test.reshape(x_test.shape[0],x_test.shape[1],1)
 
 y_train=tf.keras.utils.to_categorical(y_train,num_classes=num_classes, dtype='float32')
 y_test= tf.keras.utils.to_categorical(y_test,num_classes=num_classes, dtype='float32')
@@ -53,7 +53,7 @@ model = keras.Sequential([
     keras.layers.Dense(2, activation=tf.nn.softmax)
 ])
 
-tensorboard = TensorBoard(log_dir='logs\\{}'.format(time()), histogram_freq=10,
+tensorboard = TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=10,
     batch_size=32,
     write_graph=True,
     write_grads=False,
@@ -65,7 +65,7 @@ tensorboard = TensorBoard(log_dir='logs\\{}'.format(time()), histogram_freq=10,
     update_freq='epoch'
 )
 
-model.compile(optimizer='adam', 
+model.compile(optimizer='adam',
 
               loss='binary_crossentropy',
               metrics=['accuracy'])
@@ -95,4 +95,3 @@ test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=40)
 model.save(os.getcwd()+"\\weights\\Best_Model_using_ft_weights_CNN.h5")
 
 print(test_acc,test_loss)
-

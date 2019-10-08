@@ -62,7 +62,7 @@ print('Training...')
 history= model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=50,
-          validation_data=[x_test, y_test])#,
+          validation_data=[x_test, y_test],
           callbacks=[tensorboard])
 
 # Prediction and ROC/ AUC curve plotting
