@@ -21,7 +21,7 @@ batch_size = 32
 print('Loading data...')
 
 def read_dataset():
-    df = pd.read_csv("tain_DL.csv")
+    df = pd.read_csv("./data/tain_DL.csv")
     ln=(len(df.columns)-1)
     X = df[df.columns[0:ln]].values
     X = X.reshape(np.shape(X)[0],np.shape(X)[1])
