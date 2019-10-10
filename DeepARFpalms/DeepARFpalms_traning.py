@@ -33,7 +33,6 @@ x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.20, random
 x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 
-
 x_train=x_train.reshape(x_train.shape[0],x_train.shape[1],1)
 x_test=x_test.reshape(x_test.shape[0],x_test.shape[1],1)
 
