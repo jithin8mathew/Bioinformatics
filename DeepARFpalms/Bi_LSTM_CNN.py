@@ -25,9 +25,9 @@ def read_dataset():
     df = pd.read_csv("./data/tain_DL.csv")
     ln=(len(df.columns)-1)
     X = df[df.columns[0:ln]].values
-    X = X.reshape(np.shape(X)[0],np.shape(X)[1])
+    X = X.reshape(np.shape(X)[0],np.shape(X)[1],1)
     Y = np.array(df[df.columns[ln]])
-    Y = Y.reshape(np.shape(Y)[0])
+    Y = Y.reshape(np.shape(Y)[0],1)
     return (X,Y)
 
 X, Y = read_dataset()
@@ -50,7 +50,7 @@ y_test = np.array(y_test)
 #     tf.keras.layers.Dense(1, activation='sigmoid')
 # ])
 
-inputs = tf.keras.layers.Input(shape=(maxlen,)) # Max 500 bases
+inputs = tf.keras.layers.Input(shape=(x_train.shape[1:3]))#shape=(maxlen,)) # Max 500 bases
 convo_1 = tf.keras.layers.Conv1D(320, kernel_size=3,  activation="relu")(inputs)
 maxpool_1 = tf.keras.layers.GlobalMaxPool1D()(convo_1)
 drop_1 = tf.keras.layers.Dropout(0.2)(maxpool_1)

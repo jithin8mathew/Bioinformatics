@@ -1,5 +1,6 @@
 # tensorboard --logdir=logs/
 # TensorFlow and tf.keras
+# CNN
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 
@@ -14,9 +15,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tensorflow.python.keras.callbacks import TensorBoard
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import matthews_corrcoef, roc_curve, auc, classification_report, r2_score
 
 num_classes = 2
 epochs = 1000
+batch_size=40
 
 def read_dataset():
     df = pd.read_csv("data/tain_DL.csv")
@@ -43,8 +46,8 @@ model = keras.Sequential([
     tf.keras.layers.Conv1D(1, 3, activation=tf.nn.relu, input_shape=(x_train.shape[1:3])),
     tf.keras.layers.Conv1D(64, 3, activation=tf.nn.relu),
     tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu),
-    tf.keras.layers.MaxPool1D(3),
-    tf.keras.layers.MaxPool1D(3),
+    tf.keras.layers.MaxPool1D(),
+    tf.keras.layers.MaxPool1D(),
     tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu),
     tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu),
     tf.keras.layers.GlobalMaxPool1D(),
@@ -72,12 +75,9 @@ model.compile(optimizer='adam',
 history=model.fit(x_train, y_train, batch_size=40, epochs=epochs,validation_split=0.25, verbose=1, callbacks=[tensorboard])
 
 
-from sklearn.metrics import matthews_corrcoef
-from sklearn.metrics import roc_curve
+# Prediction and ROC/ AUC curve plotting
 y_pred = model.predict(x_test)
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(np.ravel(y_test), np.ravel(y_pred))
-
-from sklearn.metrics import auc
 auc_keras = auc(fpr_keras, tpr_keras)
 
 plt.figure(1)
@@ -89,8 +89,11 @@ plt.title('ROC curve')
 plt.legend(loc='best')
 plt.show()
 
-test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=40)
+test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=batch_size)
 
-model.save(os.getcwd()+"\\weights\\Best_Model_using_ft_weights_CNN.h5")
+model.save("CNN.h5")
 
-print(test_acc,test_loss)
+print('Test accuracy :',test_acc,'Test Loss :',test_loss)
+print('matthews correlation coefficient ',matthews_corrcoef(np.ravel(y_test.round()), np.ravel(y_pred.round())))
+print(classification_report(np.ravel(y_test.round()), np.ravel(y_pred.round()), target_names=['class 1','class 2']))
+print('r2 score ',r2_score(np.ravel(y_test.round()), np.ravel(y_pred.round())))
