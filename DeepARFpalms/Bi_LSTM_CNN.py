@@ -4,7 +4,7 @@ import pandas as pd
 from time import time
 import tensorflow as tf
 from tensorflow import keras
-
+#from tf.keras.models import Model
 from keras.preprocessing import sequence
 from tensorflow.python.keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
@@ -31,38 +31,47 @@ def read_dataset():
     return (X,Y)
 
 X, Y = read_dataset()
+X, Y = shuffle(X, Y, random_state=1)
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
-x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
-x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+#x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+#x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
 print('x_train shape:', x_train.shape)
 print('x_test shape:', x_test.shape)
+
 y_train = np.array(y_train)
 y_test = np.array(y_test)
-#
-# model = keras.Sequential([
-#     tf.keras.layers.Embedding(max_features, 128, input_shape=(maxlen,),trainable=True), #, input_length=maxlen   [None, 128]   [None, 100, None, 128]   [None, None, 100, 128]
-#     tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64)),
-#     tf.keras.layers.Dropout(0.5),
-#     tf.keras.layers.Conv1D(64, kernel_size=3, padding='valid', kernel_initializer='glorot_uniform', activation=tf.nn.relu),
-#     tf.keras.layers.GlobalAveragePooling1D(),
-#     tf.keras.layers.GlobalMaxPooling1D(),
-#     tf.keras.layers.Dense(1, activation='sigmoid')
-# ])
 
-inputs = tf.keras.layers.Input(shape=(x_train.shape[1:3]))#shape=(maxlen,)) # Max 500 bases
-convo_1 = tf.keras.layers.Conv1D(320, kernel_size=3,  activation="relu")(inputs)
-maxpool_1 = tf.keras.layers.GlobalMaxPool1D()(convo_1)
-drop_1 = tf.keras.layers.Dropout(0.2)(maxpool_1)
-l_lstm = tf.keras.layers.LSTM(320, return_sequences = True, go_backwards= False)(drop_1)
-r_lstm = tf.keras.layers.LSTM(320, return_sequences = True, go_backwards= True)(drop_1)
-merged = merge([l_lstm, r_lstm], mode='sum')
-drop_2 = tf.keras.layers.Dropout(0.5)(merged)
-flat = tf.keras.layers.Flatten()(drop_2)
-dense_1 = tf.keras.layers.Dense(320, activation='relu')(flat)
-out = tf.keras.layers.Dense(num_classes=2, activation='sigmoid')(dense_1)
+#print(x_train.shape[1:3])
+#exit()
+input = tf.keras.layers.Input(shape=(x_train.shape[1:3]))
+conv1 = tf.keras.layers.Conv1D(1, 3, activation=tf.nn.relu)(input)
+max1 = tf.keras.layers.MaxPool1D()(conv1)
+conv2 = tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu)(max1)
+max2 = tf.keras.layers.GlobalMaxPool1D()(conv2)
+flat = tf.keras.layers.Flatten()(max2)
+flat = tf.keras.layers.Reshape(maxlen,)
+lstm = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences=True))(flat)
+flat2 = tf.keras.layers.Flatten()(lstm)
+#drop1= tf.keras.layers.Dropout(0.5)(max2)
+out= tf.keras.layers.Dense(1, activation=tf.nn.softmax)(flat2)#(drop1)
 
-model = Model(inputs, out)
+
+# inp = tf.keras.layers.Input(shape=(maxlen,max_features))
+# inputs = tf.keras.layers.Embedding(max_features, 128, input_length=maxlen)(inp)
+# #inputs = tf.keras.layers.Input(shape=(maxlen,))#shape=(maxlen,)) # Max 500 bases
+# #convo_1 = tf.keras.layers.Conv1D(320, kernel_size=3,  activation="relu")(inputs)
+# #maxpool_1 = tf.keras.layers.GlobalMaxPool1D()(convo_1)
+# drop_1 = tf.keras.layers.Dropout(0.2)(inputs)#(maxpool_1)
+# l_lstm = tf.keras.layers.LSTM(320, return_sequences = True, go_backwards= False)(drop_1)
+# r_lstm = tf.keras.layers.LSTM(320, return_sequences = True, go_backwards= True)(drop_1)
+# merged = tf.keras.layers.concatenate([l_lstm, r_lstm]) #, mode='sum'
+# drop_2 = tf.keras.layers.Dropout(0.5)(merged)
+# flat = tf.keras.layers.Flatten()(drop_2)
+# dense_1 = tf.keras.layers.Dense(320, activation='relu')(flat)
+# out = tf.keras.layers.Dense(2, activation='sigmoid')(dense_1)
+
+model = keras.Model(input, out)
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
