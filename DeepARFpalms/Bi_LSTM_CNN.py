@@ -4,7 +4,6 @@ import pandas as pd
 from time import time
 import tensorflow as tf
 from tensorflow import keras
-#from tf.keras.models import Model
 from keras.preprocessing import sequence
 from tensorflow.python.keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
@@ -34,28 +33,24 @@ X, Y = read_dataset()
 X, Y = shuffle(X, Y, random_state=1)
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
-#x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
-#x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
 print('x_train shape:', x_train.shape)
 print('x_test shape:', x_test.shape)
 
 y_train = np.array(y_train)
 y_test = np.array(y_test)
 
-#print(x_train.shape[1:3])
-#exit()
 input = tf.keras.layers.Input(shape=(x_train.shape[1:3]))
 conv1 = tf.keras.layers.Conv1D(1, 3, activation=tf.nn.relu)(input)
 max1 = tf.keras.layers.MaxPool1D()(conv1)
 conv2 = tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu)(max1)
 max2 = tf.keras.layers.GlobalMaxPool1D()(conv2)
 flat = tf.keras.layers.Flatten()(max2)
-flat = tf.keras.layers.Reshape(maxlen,)
+flat = tf.keras.layers.Reshape((1, 128),input_shape=(None, 128))(flat)
+#flat = tf.keras.layers.Embedding(max_features, 128, input_length=maxlen)(flat)
 lstm = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences=True))(flat)
 flat2 = tf.keras.layers.Flatten()(lstm)
 #drop1= tf.keras.layers.Dropout(0.5)(max2)
 out= tf.keras.layers.Dense(1, activation=tf.nn.softmax)(flat2)#(drop1)
-
 
 # inp = tf.keras.layers.Input(shape=(maxlen,max_features))
 # inputs = tf.keras.layers.Embedding(max_features, 128, input_length=maxlen)(inp)
@@ -72,6 +67,7 @@ out= tf.keras.layers.Dense(1, activation=tf.nn.softmax)(flat2)#(drop1)
 # out = tf.keras.layers.Dense(2, activation='sigmoid')(dense_1)
 
 model = keras.Model(input, out)
+print(model.summary())
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
@@ -90,7 +86,7 @@ tensorboard = TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=10,
 print('Training...')
 history= model.fit(x_train, y_train,
           batch_size=batch_size,
-          epochs=50,
+          epochs=1000,
           validation_data=[x_test, y_test],
           callbacks=[tensorboard])
 
