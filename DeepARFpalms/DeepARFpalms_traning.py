@@ -68,7 +68,6 @@ tensorboard = TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=10,
 )
 
 model.compile(optimizer='adam',
-
               loss='binary_crossentropy',
               metrics=['accuracy'])
 

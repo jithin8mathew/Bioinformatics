@@ -15,7 +15,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 max_features = 309148
-maxlen = 100
+maxlen = 1000
 batch_size = 32
 
 print('Loading data...')
@@ -38,33 +38,23 @@ print('x_test shape:', x_test.shape)
 
 y_train = np.array(y_train)
 y_test = np.array(y_test)
+y_train=tf.keras.utils.to_categorical(y_train,num_classes=2, dtype='float32')
+y_test= tf.keras.utils.to_categorical(y_test,num_classes=2, dtype='float32')
 
 input = tf.keras.layers.Input(shape=(x_train.shape[1:3]))
 conv1 = tf.keras.layers.Conv1D(1, 3, activation=tf.nn.relu)(input)
-max1 = tf.keras.layers.MaxPool1D()(conv1)
-conv2 = tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu)(max1)
-max2 = tf.keras.layers.GlobalMaxPool1D()(conv2)
-flat = tf.keras.layers.Flatten()(max2)
-flat = tf.keras.layers.Reshape((1, 128),input_shape=(None, 128))(flat)
-#flat = tf.keras.layers.Embedding(max_features, 128, input_length=maxlen)(flat)
+conv2 = tf.keras.layers.Conv1D(64, 3, activation=tf.nn.relu)(conv1)
+max1 = tf.keras.layers.MaxPool1D()(conv2)
+max2 = tf.keras.layers.MaxPool1D()(max1)
+conv3 = tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu)(max2)
+conv4 = tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu)(conv3)
+max3 = tf.keras.layers.GlobalMaxPool1D()(conv4)
+flat = tf.keras.layers.Flatten()(max3)
+flat = tf.keras.layers.Reshape((1, 128),input_shape=(flat.get_shape()))(flat)
 lstm = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences=True))(flat)
 flat2 = tf.keras.layers.Flatten()(lstm)
-#drop1= tf.keras.layers.Dropout(0.5)(max2)
-out= tf.keras.layers.Dense(1, activation=tf.nn.softmax)(flat2)#(drop1)
-
-# inp = tf.keras.layers.Input(shape=(maxlen,max_features))
-# inputs = tf.keras.layers.Embedding(max_features, 128, input_length=maxlen)(inp)
-# #inputs = tf.keras.layers.Input(shape=(maxlen,))#shape=(maxlen,)) # Max 500 bases
-# #convo_1 = tf.keras.layers.Conv1D(320, kernel_size=3,  activation="relu")(inputs)
-# #maxpool_1 = tf.keras.layers.GlobalMaxPool1D()(convo_1)
-# drop_1 = tf.keras.layers.Dropout(0.2)(inputs)#(maxpool_1)
-# l_lstm = tf.keras.layers.LSTM(320, return_sequences = True, go_backwards= False)(drop_1)
-# r_lstm = tf.keras.layers.LSTM(320, return_sequences = True, go_backwards= True)(drop_1)
-# merged = tf.keras.layers.concatenate([l_lstm, r_lstm]) #, mode='sum'
-# drop_2 = tf.keras.layers.Dropout(0.5)(merged)
-# flat = tf.keras.layers.Flatten()(drop_2)
-# dense_1 = tf.keras.layers.Dense(320, activation='relu')(flat)
-# out = tf.keras.layers.Dense(2, activation='sigmoid')(dense_1)
+drop1= tf.keras.layers.Dropout(0.5)(flat2)
+out= tf.keras.layers.Dense(2, activation=tf.nn.softmax)(drop1)#(flat2)#(drop1)
 
 model = keras.Model(input, out)
 print(model.summary())
@@ -109,6 +99,6 @@ test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=batch_size)
 model.save("BDLSTM.h5")
 
 print('Test accuracy :',test_acc,'Test Loss :',test_loss)
-print('matthews correlation coefficient ',matthews_corrcoef(y_test, np.ravel(y_pred.round())))
-print(classification_report(y_test, np.ravel(y_pred.round()), target_names=['class 1','class 2']))
-print('r2 score ',r2_score(y_test, np.ravel(y_pred.round())))
+print('matthews correlation coefficient ',matthews_corrcoef(np.ravel(y_test.round()), np.ravel(y_pred.round())))
+print(classification_report(np.ravel(y_test.round()), np.ravel(y_pred.round()), target_names=['class 1','class 2']))
+print('r2 score ',r2_score(np.ravel(y_test.round()), np.ravel(y_pred.round())))
