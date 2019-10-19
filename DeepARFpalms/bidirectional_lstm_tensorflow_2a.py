@@ -64,7 +64,7 @@ tensorboard = TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=10,
 print('Training...')
 history= model.fit(x_train, y_train,
           batch_size=batch_size,
-          epochs=50,
+          epochs=100,
           validation_data=[x_test, y_test],
           callbacks=[tensorboard])
 

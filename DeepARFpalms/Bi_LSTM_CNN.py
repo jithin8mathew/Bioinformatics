@@ -96,7 +96,7 @@ plt.show()
 
 test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=batch_size)
 
-model.save("BDLSTM.h5")
+model.save("./weights/BDLSTM.h5")
 
 print('Test accuracy :',test_acc,'Test Loss :',test_loss)
 print('matthews correlation coefficient ',matthews_corrcoef(np.ravel(y_test.round()), np.ravel(y_pred.round())))

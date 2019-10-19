@@ -52,7 +52,7 @@ model = keras.Sequential([
     tf.keras.layers.Conv1D(128, 3, activation=tf.nn.relu),
     tf.keras.layers.GlobalMaxPool1D(),
     tf.keras.layers.Dropout(0.5),
-    keras.layers.Dense(2, activation=tf.nn.softmax)
+    tf.keras.layers.Dense(2, activation=tf.nn.softmax)
 ])
 
 tensorboard = TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=10,

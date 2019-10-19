@@ -16,7 +16,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import matthews_corrcoef, roc_curve, auc, classification_report, r2_score
 
 num_classes = 2
-epochs = 10
+epochs = 1000
 batch_size = 32
 
 def read_dataset():
@@ -45,6 +45,9 @@ print(np.shape(x_train),np.shape(x_test),np.shape(y_train),np.shape(y_test))
 model = keras.Sequential([
     keras.layers.Dense(64, activation=tf.nn.relu, input_shape=(x_train.shape[1:3])),
     keras.layers.Dense(128, activation=tf.nn.relu),
+    keras.layers.Dense(256, activation=tf.nn.relu),
+    keras.layers.Dense(512, activation=tf.nn.relu),
+    keras.layers.Dense(1024, activation=tf.nn.relu),
     keras.layers.Dense(1024, activation=tf.nn.relu),
     keras.layers.Dense(256, activation=tf.nn.relu),
     keras.layers.Dense(2, activation=tf.nn.softmax)])
@@ -84,7 +87,7 @@ plt.show()
 
 test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=batch_size)
 
-model.save("MLP.h5")
+model.save("./weights/MLP.h5")
 
 print('Test accuracy :',test_acc,'Test Loss :',test_loss)
 print(np.argmax(y_pred.round()), np.argmax(y_test))
