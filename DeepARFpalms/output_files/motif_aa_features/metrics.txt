@@ -1,0 +1,109 @@
+Bi LSTM + CNN
+epochs : 1000
+
+Test accuracy : 1.0 Test Loss : 8.725871339265723e-06
+matthews correlation coefficient  1.0
+             precision    recall  f1-score   support
+
+    class 1       1.00      1.00      1.00        14
+    class 2       1.00      1.00      1.00        14
+
+avg / total       1.00      1.00      1.00        28
+
+r2 score  1.0
+
+
+epochs : 100
+
+Test accuracy : 1.0 Test Loss : 0.004737502429634333
+matthews correlation coefficient  1.0
+             precision    recall  f1-score   support
+
+    class 1       1.00      1.00      1.00        14
+    class 2       1.00      1.00      1.00        14
+
+avg / total       1.00      1.00      1.00        28
+
+r2 score  1.0
+#####################################################
+
+BLSTM
+
+epochs : 1000
+
+Test accuracy : 1.0 Test Loss : 0.007970326580107212
+matthews correlation coefficient  1.0
+             precision    recall  f1-score   support
+
+    class 1       1.00      1.00      1.00         8
+    class 2       1.00      1.00      1.00         6
+
+avg / total       1.00      1.00      1.00        14
+
+r2 score  1.0
+
+epochs : 100
+
+Test accuracy : 1.0 Test Loss : 0.0011878457153216004
+matthews correlation coefficient  1.0
+             precision    recall  f1-score   support
+
+    class 1       1.00      1.00      1.00         8
+    class 2       1.00      1.00      1.00         6
+
+avg / total       1.00      1.00      1.00        14
+
+r2 score  1.0
+
+###################################################
+
+CNN 
+
+1000
+
+Test accuracy : 0.9285714 Test Loss : 1.0985071659088135
+matthews correlation coefficient  0.8571428571428571
+             precision    recall  f1-score   support
+
+    class 1       0.93      0.93      0.93        14
+    class 2       0.93      0.93      0.93        14
+
+avg / total       0.93      0.93      0.93        28
+
+r2 score  0.7142857142857143
+
+100
+
+Test accuracy : 0.35714287 Test Loss : 9.88655948638916
+matthews correlation coefficient  -0.2857142857142857
+             precision    recall  f1-score   support
+
+    class 1       0.36      0.36      0.36        14
+    class 2       0.36      0.36      0.36        14
+
+avg / total       0.36      0.36      0.36        28
+
+r2 score  -1.5714285714285716
+
+####################################################
+
+MLP
+1000
+
+??????????????????????????????????????
+
+100
+
+Test accuracy : 0.64285713 Test Loss : 5.492533206939697
+1 1
+matthews correlation coefficient  0.2857142857142857
+             precision    recall  f1-score   support
+
+    class 1       0.64      0.64      0.64        14
+    class 2       0.64      0.64      0.64        14
+
+avg / total       0.64      0.64      0.64        28
+
+r2 score  -0.4285714285714286
+
+1000

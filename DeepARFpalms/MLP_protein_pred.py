@@ -20,7 +20,8 @@ epochs = 1000
 batch_size = 32
 
 def read_dataset():
-    df = pd.read_csv("data/tain_DL.csv")
+    #df = pd.read_csv("data/tain_DL.csv")
+    df = pd.read_csv("./data/training_data.csv")
     ln=(len(df.columns)-1)
     X = df[df.columns[0:ln]].values
     Y = df[df.columns[ln]]
