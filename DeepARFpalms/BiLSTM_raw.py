@@ -8,7 +8,7 @@ from tensorflow import keras
 from keras.preprocessing import sequence
 from tensorflow.python.keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
+from sklearn.utils import shuffle, class_weight
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import matthews_corrcoef, roc_curve, auc, classification_report, r2_score
 import warnings
@@ -34,6 +34,7 @@ def read_dataset():
         for record in SeqIO.parse(handle, "fasta"):
             X.append(str(record.seq))
             Y.append(0)
+    return X, Y
     #print(Y)
             #print(record.seq)
     # df = pd.read_csv("./data/training_data.csv")
@@ -44,9 +45,44 @@ def read_dataset():
     # Y = np.array(df[df.columns[ln]])
     # Y = Y.reshape(np.shape(Y)[0])
     # return (X,Y)
-read_dataset()
+#read_dataset()
+#exit()
+X, Y = read_dataset()
+
+#######
+X_train = np.array(X)
+y_train = np.array(Y)
+
+X_train = X_train.reshape(len(X_train),1)
+
+amino_acids ='ACDEFGHIKLMNPQRSTVWXY'
+embed = []
+for i in range(0, len(X_train)):
+    length = len(X_train[i][0])
+    pos = []
+    counter = 0
+    st = X_train[i][0]
+    for c in st:
+        AMINO_INDEX = amino_acids.index(c)
+        pos.append(AMINO_INDEX)
+        counter += 1
+    while(counter < 800):
+        pos.append(21)
+        counter += 1
+    embed.append(pos)
+embed = np.array(embed)
+
+data,Label = shuffle(embed,y_train, random_state=2)
+
+X_train = data
+y_train = Label
+
+class_weight = class_weight.compute_class_weight('balanced', np.unique(y_train), y_train)
+class_weight_dict = dict(enumerate(class_weight))
+
+print(data, Label)
 exit()
-#X, Y = read_dataset()
+######
 
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
 x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
